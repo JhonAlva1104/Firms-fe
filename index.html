@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Importar archivo CSV</title>
+</head>
+<body>
+  <h1>Importar archivo CSV</h1>
+  <form action="#" method="post" enctype="multipart/form-data">
+    <input type="file" name="archivo" id="archivo">
+  </form>
+  <script>
+    //                    Duitama                           Sogamoso                        Paipa
+    const Puntos = [{long: 5.8376,lat: -73.0224,id: "jfasldkfj@gmail.com"}, {long: 5.7141, lat: -72.9285,id:"sdkfjalksd@gmil.com"}, {long: 5.7809, lat:-73.1176,id:"fasdlkfj@gmail.com"}];
+    document.addEventListener('DOMContentLoaded', function () 
+    {
+      const archivoInput = document.getElementById('archivo');
+
+      archivoInput.addEventListener('change', function () 
+      {
+        const file = archivoInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const contenido = e.target.result;
+          const lineas = contenido.split('\n');
+          const datos = [];
+
+          lineas.forEach(function (linea) {
+            const columnas = linea.split(',');
+            if (columnas.length >= 2) {
+              const columna1 = columnas[0].trim();
+              const columna2 = columnas[1].trim();
+              datos.push([columna1, columna2]);
+            }
+          });
+          const notifications=[];            
+          Tam = datos.length;
+          console.log(Tam);
+          
+          Puntos.forEach((item) => {
+              datos.forEach((dato,index) => {
+                if(index!=0)
+                {
+                  const [longitude, latitude] = dato;
+                  distance=getDistanceBetweenPoints(parseFloat(latitude),parseFloat(longitude),parseFloat(item.lat),parseFloat(item.long),'kilometers');
+                  if(distance<=8)
+                  {
+                       notifications.push({id: item.id, distance});
+                  }
+                }
+              })
+          })
+          console.log(notifications);
+        };
+        
+        reader.readAsText(file);
+      });
+    });
+
+
+    function getDistanceBetweenPoints(latitude1, longitude1, latitude2, longitude2) {
+    const theta = longitude1 - longitude2;
+    const distance = 60 * 1.1515 * 1.609344 * (180/Math.PI) * Math.acos(Math.sin(latitude1 * (Math.PI/180)) * Math.sin(latitude2 * (Math.PI/180)) + Math.cos(latitude1 * (Math.PI/180)) * Math.cos(latitude2 * (Math.PI/180)) * Math.cos(theta * (Math.PI/180)));
+    return Math.round(distance, 2);
+}
+  </script>
+</body>
+</html>
